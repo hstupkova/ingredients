@@ -52,9 +52,16 @@ function Ingredients() {
   };
 
   const removeIngredientHandler = (id) => {
-    setUserIngredients((prevIngredients) =>
-      prevIngredients.filter((item) => item.id !== id),
-    );
+    fetch(
+      `https://ingredients-cddc9-default-rtdb.europe-west1.firebasedatabase.app/ingredients/${id}.json`,
+      {
+        method: 'DELETE',
+      },
+    ).then((response) => {
+      setUserIngredients((prevIngredients) =>
+        prevIngredients.filter((item) => item.id !== id),
+      );
+    });
   };
 
   return (
