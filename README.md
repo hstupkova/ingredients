@@ -1,4 +1,4 @@
-# Ingrediens
+# Ingredients
 
 React hooks overview.
 
