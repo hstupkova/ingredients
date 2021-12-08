@@ -3,9 +3,12 @@ import React, { useState, useCallback } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
+import ErrorModal from '../UI/ErrorModal';
 
 function Ingredients() {
   const [userIngredients, setUserIngredients] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
   /* useEffect(() => {
     fetch(
@@ -32,6 +35,7 @@ function Ingredients() {
   }, []);
 
   const addIngredientHandler = (ingredient) => {
+    setIsLoading(true);
     fetch(
       'https://ingredients-cddc9-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json',
       {
@@ -41,6 +45,7 @@ function Ingredients() {
       },
     )
       .then((response) => {
+        setIsLoading(false);
         return response.json();
       })
       .then((responseData) => {
@@ -48,25 +53,44 @@ function Ingredients() {
           ...prevIngredients,
           { id: responseData.name, ...ingredient },
         ]);
+      })
+      .catch((error) => {
+        setError('Something went wrong :(');
       });
   };
 
   const removeIngredientHandler = (id) => {
+    setIsLoading(true);
     fetch(
       `https://ingredients-cddc9-default-rtdb.europe-west1.firebasedatabase.app/ingredients/${id}.json`,
       {
         method: 'DELETE',
       },
-    ).then((response) => {
-      setUserIngredients((prevIngredients) =>
-        prevIngredients.filter((item) => item.id !== id),
-      );
-    });
+    )
+      .then((response) => {
+        setIsLoading(false);
+        setUserIngredients((prevIngredients) =>
+          prevIngredients.filter((item) => item.id !== id),
+        );
+      })
+      .catch((error) => {
+        setError('Something went wrong :(');
+      });
+  };
+
+  const clearError = () => {
+    setError(null);
+    setIsLoading(false);
   };
 
   return (
     <div className="App">
-      <IngredientForm onAddIngredient={addIngredientHandler} />
+      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+
+      <IngredientForm
+        onAddIngredient={addIngredientHandler}
+        loading={isLoading}
+      />
 
       <section>
         <Search onLoadIngredients={filteredIngredientsHandler} />
