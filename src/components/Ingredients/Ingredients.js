@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -7,7 +7,7 @@ import IngredientList from './IngredientList';
 function Ingredients() {
   const [userIngredients, setUserIngredients] = useState([]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     fetch(
       'https://ingredients-cddc9-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json',
     )
@@ -25,6 +25,10 @@ function Ingredients() {
         }
         setUserIngredients(loadedIngredients);
       });
+  }, []); */
+
+  const filteredIngredientsHandler = useCallback((filteredIngredients) => {
+    setUserIngredients(filteredIngredients);
   }, []);
 
   const addIngredientHandler = (ingredient) => {
@@ -58,7 +62,7 @@ function Ingredients() {
       <IngredientForm onAddIngredient={addIngredientHandler} />
 
       <section>
-        <Search />
+        <Search onLoadIngredients={filteredIngredientsHandler} />
         <IngredientList
           ingredients={userIngredients}
           onRemoveItem={removeIngredientHandler}
