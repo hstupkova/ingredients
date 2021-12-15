@@ -44,7 +44,7 @@ function Ingredients() {
     dispatch({ type: 'SET', ingredients: filteredIngredients });
   }, []);
 
-  const addIngredientHandler = (ingredient) => {
+  const addIngredientHandler = useCallback((ingredient) => {
     dispatchHttp({ type: 'SEND' });
     fetch(
       'https://ingredients-cddc9-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json',
@@ -67,9 +67,9 @@ function Ingredients() {
       .catch((error) => {
         dispatchHttp({ type: 'ERROR', errorMessage: error.message });
       });
-  };
+  }, []);
 
-  const removeIngredientHandler = (id) => {
+  const removeIngredientHandler = useCallback((id) => {
     dispatchHttp({ type: 'SEND' });
     fetch(
       `https://ingredients-cddc9-default-rtdb.europe-west1.firebasedatabase.app/ingredients/${id}.json`,
@@ -84,15 +84,17 @@ function Ingredients() {
       .catch((error) => {
         dispatchHttp({ type: 'ERROR', errorMessage: error.message });
       });
-  };
+  }, []);
 
   const clearError = () => {
-    dispatchHttp({type: 'CLEAR'});
+    dispatchHttp({ type: 'CLEAR' });
   };
 
   return (
     <div className="App">
-      {httpState.error && <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>}
+      {httpState.error && (
+        <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>
+      )}
 
       <IngredientForm
         onAddIngredient={addIngredientHandler}
